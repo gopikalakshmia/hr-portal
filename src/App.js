@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import MainLayout from './components/MainLayout';
 import Home from './components/Home';
 import Signup from './components/Signup';
-import Employee from './components/Employee';
-import Hr from './components/Hr';
+import Employee from './components/Employee/Employee';
+import Hr from './components/Hr/Hr';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
@@ -14,8 +15,17 @@ function App() {
       children:[
         {index:true,element:<Home/>},
         {path:"signup",element:<Signup/>},
-        {path:"hr",element:<Hr/>},
-        {path:"",element:<Employee/>}
+        {path:"hr",element:(
+          <ProtectedRoute role="hr">
+          <Hr/>
+          </ProtectedRoute>
+        )},
+        {path:"employee",element:(
+          <ProtectedRoute role="employee">
+          <Employee/>
+          </ProtectedRoute>
+        )
+        }
       ]
     }
   ])

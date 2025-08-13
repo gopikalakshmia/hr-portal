@@ -1,39 +1,51 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import { Dropdown } from "bootstrap";
 
 export default function SignUp() {
   const [error, setError] = useState({
+    fullName: "",
     username: "",
     password: "",
     role: "",
     department: "",
+    email: "",
   });
   const [user, setUser] = useState({
+    fullName: "",
     username: "",
     password: "",
     role: "",
     department: "",
   });
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newErrors = {};
+    if (!user.fullName) newErrors.fullName = "Please fill the full name";
     if (!user.username) newErrors.username = "Please fill the username";
     if (!user.password) newErrors.password = "Please fill the Password";
     if (!user.department) newErrors.department = "Please fill the Department";
     if (!user.role) newErrors.role = "Please fill the role";
 
+    let storedUser = JSON.parse(localStorage.getItem("user")) ?? [];
+    storedUser.forEach((element) => {
+      if (element.username === user.username) {
+        newErrors.username = "Username is already registered";
+        return;
+      }
+    });
+
     setError(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // No errors, proceed
-      console.log("user", user);
-      let storedUser=[];
-      storedUser=localStorage.getItem("user")||[];
       storedUser.push(user);
-      localStorage.setItem("user",JSON.stringify(storedUser) );
+      localStorage.setItem("user", JSON.stringify(storedUser));
+      alert("Signup successful! Please log in.");
+      navigate("/");
     }
   };
 
@@ -42,13 +54,31 @@ export default function SignUp() {
       <h2 className="mb-4">SignUp</h2>
 
       <form onSubmit={handleSubmit}>
+        {/* Full Name input */}
+        <div className="mb-3">
+          <label className="form-label">Full Name</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter your full name"
+            value={user.fullName}
+            onChange={(e) =>
+              setUser((prev) => ({ ...prev, fullName: e.target.value }))
+            }
+            required
+          />
+          {error.fullName && (
+            <div className="text-danger">{error.fullName}</div>
+          )}
+        </div>
+
         {/* Email input */}
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label">Email (Username)</label>
           <input
             type="email"
             className="form-control"
-            placeholder="Enter your username"
+            placeholder="Enter your username (email)"
             value={user.username}
             onChange={(e) =>
               setUser((prev) => ({ ...prev, username: e.target.value }))
@@ -58,7 +88,9 @@ export default function SignUp() {
           {error.username && (
             <div className="text-danger">{error.username}</div>
           )}
+          {error.email && <div className="text-danger">{error.email}</div>}
         </div>
+
         {/* Department input */}
         <div className="mb-3">
           <label className="form-label">Department</label>
