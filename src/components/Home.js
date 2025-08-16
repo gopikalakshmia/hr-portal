@@ -34,7 +34,7 @@ export default function Home() {
       if (foundUser) {
         localStorage.removeItem("LoggedInUser");
         console.log("foundUser",foundUser);
-        const loggedInUser={...user,fullName:foundUser.fullName};
+        const loggedInUser={...user,fullName:foundUser.fullName,department:foundUser.department};
         localStorage.setItem("LoggedInUser",JSON.stringify(loggedInUser));
         if (user.role === "hr") {
           navigate("/hr");
